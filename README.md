@@ -35,7 +35,7 @@ source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 # 4. Launch the app
-streamlit run frontend/app.py
+python -m streamlit run frontend/app.py
 ```
 
 Open your browser at **http://localhost:8501**
