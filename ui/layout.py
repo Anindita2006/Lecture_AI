@@ -1,11 +1,10 @@
 """
 ui/layout.py
 ─────────────────────────────────────────────────────────────
-Premium Layout Upgrade:
+Premium Layout Upgrade (Fixed Version)
 • Side-by-side upload + options
 • Tab-based results (no long scroll)
-• Summary tab added
-• Cleaner spacing + modern UX
+• Cleaner structure
 """
 
 import time
@@ -45,12 +44,15 @@ def render_page_header() -> None:
     st.markdown(render_header(), unsafe_allow_html=True)
 
 
-# ── Upload + Options (SIDE BY SIDE) ───────────────────────
+# ── Top Section (Upload + Options) ─────────────────────────
 
 def render_top_section():
     col1, col2 = st.columns(2)
 
-    # Upload
+    uploaded = None
+    model_size = None
+    language = None
+
     with col1:
         st.markdown(section_label("🎙", "Upload Audio"), unsafe_allow_html=True)
         st.markdown(open_card(), unsafe_allow_html=True)
@@ -70,7 +72,6 @@ def render_top_section():
 
         st.markdown(close_card(), unsafe_allow_html=True)
 
-    # Options
     with col2:
         st.markdown(section_label("⚙️", "Options"), unsafe_allow_html=True)
         st.markdown(open_card(), unsafe_allow_html=True)
@@ -80,15 +81,13 @@ def render_top_section():
 
         st.markdown(close_card(), unsafe_allow_html=True)
 
-    return uploaded
+    return uploaded, model_size, language
 
 
 # ── Process Button ─────────────────────────────────────────
 
 def render_process_button(uploaded):
-    st.markdown("<div style='margin-top:0.8rem'>", unsafe_allow_html=True)
     clicked = st.button("⚡ Process Lecture", use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
 
     if clicked and not uploaded:
         st.warning("Upload file first 😑")
@@ -111,7 +110,10 @@ def simulate_processing():
     bar = st.progress(0)
 
     for text, val in steps:
-        placeholder.markdown(f"<p style='color:#cbd5f5'>{text}</p>", unsafe_allow_html=True)
+        placeholder.markdown(
+            f"<p style='color:#cbd5f5'>{text}</p>",
+            unsafe_allow_html=True,
+        )
         bar.progress(val)
         time.sleep(0.6)
 
@@ -119,7 +121,7 @@ def simulate_processing():
     bar.empty()
 
 
-# ── Results (TABS — NO SCROLL) ─────────────────────────────
+# ── Results Section (TABS UI) ──────────────────────────────
 
 def render_results(filename: str):
 
@@ -150,11 +152,16 @@ def render_results(filename: str):
         st.markdown(topic_tags(primary_topic, secondary_topics), unsafe_allow_html=True)
         st.markdown(close_card(), unsafe_allow_html=True)
 
-    # ── Summary (NEW COOL PART) ───────────
+    # ── Summary ───────────────────────────
     with tab3:
         st.markdown(open_card(), unsafe_allow_html=True)
         st.markdown(
-            "<p style='color:#cbd5f5'>This lecture discusses core concepts in a structured and easy-to-understand way. Key ideas are highlighted with practical examples, making it useful for revision and learning.</p>",
+            """
+            <p style='color:#cbd5f5'>
+            This lecture covers key concepts in a structured way.
+            It is summarized for quick revision and better understanding.
+            </p>
+            """,
             unsafe_allow_html=True,
         )
         st.markdown(close_card(), unsafe_allow_html=True)
