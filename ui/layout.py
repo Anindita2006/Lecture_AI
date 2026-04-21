@@ -34,7 +34,7 @@ from utils.helpers import (
 # ── Inject CSS ─────────────────────────────────────────────
 
 def inject_styles() -> None:
-    css = load_css("style.css")
+    css = load_css("frontend/style.css")
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 
