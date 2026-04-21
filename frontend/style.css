@@ -1,26 +1,27 @@
 /* ============================================================
-   LECTUREAI — Premium Dark Glassmorphism Stylesheet
+   LECTUREAI — Soft Dark Glassmorphism (Improved)
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
 /* ── Root Variables ─────────────────────────────────────── */
 :root {
-  --bg-void:        #080b12;
-  --bg-deep:        #0d1117;
-  --bg-surface:     #111827;
-  --glass-bg:       rgba(255, 255, 255, 0.04);
-  --glass-border:   rgba(255, 255, 255, 0.08);
-  --glass-hover:    rgba(255, 255, 255, 0.07);
+  --bg-void:        #0f172a;
+  --bg-deep:        #1e293b;
+  --bg-surface:     #1f2937;
+
+  --glass-bg:       rgba(255, 255, 255, 0.08);
+  --glass-border:   rgba(255, 255, 255, 0.15);
+  --glass-hover:    rgba(255, 255, 255, 0.12);
 
   --accent-cyan:    #00e5ff;
+  --accent-softblue:#38bdf8;
   --accent-violet:  #7c3aed;
   --accent-indigo:  #4f46e5;
-  --accent-glow:    rgba(0, 229, 255, 0.15);
 
-  --text-primary:   #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted:     #475569;
+  --text-primary:   #f8fafc;
+  --text-secondary: #cbd5f5;
+  --text-muted:     #64748b;
 
   --radius-card:    18px;
   --radius-pill:    100px;
@@ -34,7 +35,7 @@
 
 html, body, [data-testid="stAppViewContainer"],
 [data-testid="stApp"] {
-  background: var(--bg-void) !important;
+  background: linear-gradient(135deg, #0f172a, #1e293b) !important;
   color: var(--text-primary) !important;
   font-family: var(--font-body) !important;
 }
@@ -45,390 +46,121 @@ html, body, [data-testid="stAppViewContainer"],
 [data-testid="stDecoration"],
 [data-testid="stStatusWidget"] { display: none !important; }
 
-/* Main content column */
+/* Main content */
 [data-testid="stAppViewContainer"] > .main .block-container {
-  padding: 2.5rem 2rem 5rem !important;
-  max-width: 900px !important;
+  padding: 2rem 1.5rem 3rem !important;
+  max-width: 850px !important;
   margin: 0 auto !important;
 }
 
-/* ── Animated Background Grid ───────────────────────────── */
+/* ── Background Grid ───────────────────────────────────── */
 [data-testid="stAppViewContainer"]::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(79, 70, 229, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79, 70, 229, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
   pointer-events: none;
-  z-index: 0;
 }
 
-/* ── Header ─────────────────────────────────────────────── */
+/* ── Header ───────────────────────────────────────────── */
 .lect-header {
   text-align: center;
-  padding: 3.5rem 0 2.5rem;
-  position: relative;
-}
-
-.lect-header::after {
-  content: '';
-  display: block;
-  width: 120px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet));
-  border-radius: 2px;
-  margin: 1.5rem auto 0;
-}
-
-.lect-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0, 229, 255, 0.08);
-  border: 1px solid rgba(0, 229, 255, 0.2);
-  color: var(--accent-cyan);
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 5px 14px;
-  border-radius: var(--radius-pill);
-  margin-bottom: 1.2rem;
+  padding: 2.5rem 0 1.8rem;
 }
 
 .lect-title {
-  font-family: var(--font-display) !important;
-  font-size: clamp(2rem, 5vw, 3rem) !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-  background: linear-gradient(135deg, #f1f5f9 30%, var(--accent-cyan));
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff, var(--accent-softblue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .lect-subtitle {
-  font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--text-secondary);
-  font-weight: 300;
-  max-width: 520px;
-  margin: 0.75rem auto 0;
-  line-height: 1.6;
+  margin-top: 0.6rem;
 }
 
-/* ── Glass Cards ─────────────────────────────────────────── */
+/* ── Glass Cards ───────────────────────────────────────── */
 .glass-card {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 2rem;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  transition: border-color 0.3s ease, background 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.glass-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  padding: 1.6rem;
+  backdrop-filter: blur(14px);
+  transition: all 0.3s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(0, 229, 255, 0.2);
+  border-color: var(--accent-softblue);
   background: var(--glass-hover);
 }
 
-/* ── Section Labels ──────────────────────────────────────── */
-.section-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-}
-
-.section-label span.dot {
-  width: 6px; height: 6px;
-  background: var(--accent-cyan);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--accent-cyan);
-}
-
-/* ── Divider ─────────────────────────────────────────────── */
-.lect-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
-  margin: 2rem 0;
-}
-
-/* ── Upload Zone ─────────────────────────────────────────── */
-.upload-zone {
-  background: var(--glass-bg);
-  border: 1.5px dashed rgba(0, 229, 255, 0.25);
-  border-radius: var(--radius-card);
-  padding: 2.5rem 2rem;
-  text-align: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.upload-zone:hover {
-  border-color: var(--accent-cyan);
-  background: rgba(0, 229, 255, 0.04);
-}
-
-.upload-icon {
-  font-size: 2.8rem;
-  margin-bottom: 0.75rem;
-  display: block;
-  filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.4));
-}
-
-.upload-title {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.upload-hint {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-top: 0.4rem;
-}
-
-/* ── Streamlit file uploader override ───────────────────── */
-[data-testid="stFileUploader"] {
-  background: transparent !important;
-}
-
+/* ── Upload Box ───────────────────────────────────────── */
 [data-testid="stFileUploader"] > div {
-  background: rgba(0, 229, 255, 0.03) !important;
-  border: 1.5px dashed rgba(0, 229, 255, 0.2) !important;
+  background: rgba(56, 189, 248, 0.05) !important;
+  border: 1.5px dashed rgba(56, 189, 248, 0.3) !important;
   border-radius: 14px !important;
-  padding: 1.5rem !important;
-  transition: all 0.3s !important;
+  padding: 1.2rem !important;
 }
 
 [data-testid="stFileUploader"] > div:hover {
-  border-color: rgba(0, 229, 255, 0.45) !important;
-  background: rgba(0, 229, 255, 0.06) !important;
+  background: rgba(56, 189, 248, 0.08) !important;
+  border-color: var(--accent-softblue) !important;
 }
 
-[data-testid="stFileUploaderDropzoneInstructions"] {
-  color: var(--text-secondary) !important;
-}
-
-/* ── File Info Pill ──────────────────────────────────────── */
-.file-info-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(0, 229, 255, 0.08);
-  border: 1px solid rgba(0, 229, 255, 0.18);
-  border-radius: var(--radius-pill);
-  padding: 6px 16px 6px 10px;
-  font-size: 0.85rem;
-  color: var(--accent-cyan);
-  font-weight: 500;
-  margin-top: 0.75rem;
-}
-
-/* ── Streamlit Button Override ───────────────────────────── */
+/* ── Button ───────────────────────────────────────────── */
 [data-testid="stButton"] > button {
-  width: 100% !important;
-  background: linear-gradient(135deg, var(--accent-indigo), var(--accent-violet)) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 12px !important;
-  padding: 0.85rem 2rem !important;
-  font-family: var(--font-display) !important;
-  font-size: 1rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.03em !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-  box-shadow: 0 4px 24px rgba(79, 70, 229, 0.35) !important;
-  position: relative !important;
-  overflow: hidden !important;
+  background: linear-gradient(135deg, var(--accent-softblue), var(--accent-violet)) !important;
+  border-radius: 10px !important;
+  padding: 0.75rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3) !important;
 }
 
 [data-testid="stButton"] > button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.5) !important;
+  transform: translateY(-2px);
 }
 
-[data-testid="stButton"] > button:active {
-  transform: translateY(0) !important;
-}
-
-/* ── Transcript Box ──────────────────────────────────────── */
+/* ── Transcript Box ───────────────────────────────────── */
 .transcript-box {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  max-height: 280px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 1.2rem;
+  max-height: 240px;
   overflow-y: auto;
-  font-family: var(--font-body);
-  font-size: 0.92rem;
-  line-height: 1.8;
   color: var(--text-secondary);
-  font-weight: 300;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 229, 255, 0.3) transparent;
 }
 
-.transcript-box::-webkit-scrollbar { width: 4px; }
-.transcript-box::-webkit-scrollbar-track { background: transparent; }
-.transcript-box::-webkit-scrollbar-thumb {
-  background: rgba(0, 229, 255, 0.3);
-  border-radius: 2px;
-}
-
-/* ── Topic Badges ────────────────────────────────────────── */
-.topic-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 0.5rem;
-}
-
-.topic-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: var(--radius-pill);
-  padding: 6px 18px;
-  font-family: var(--font-display);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-}
-
+/* ── Topic Tags ───────────────────────────────────────── */
 .topic-tag.primary {
-  background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(79, 70, 229, 0.15));
-  border: 1px solid rgba(0, 229, 255, 0.3);
-  color: var(--accent-cyan);
-  box-shadow: 0 0 16px rgba(0, 229, 255, 0.1);
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: var(--accent-softblue);
 }
 
 .topic-tag.secondary {
   background: rgba(124, 58, 237, 0.1);
-  border: 1px solid rgba(124, 58, 237, 0.25);
-  color: #a78bfa;
+  color: #c4b5fd;
 }
 
-.topic-tag.tertiary {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
-}
-
-/* ── Stats Row ───────────────────────────────────────────── */
-.stats-row {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.25rem;
-}
-
+/* ── Stats ───────────────────────────────────────────── */
 .stat-chip {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--glass-border);
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 0.6rem;
 }
 
-.stat-chip .stat-value {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--accent-cyan);
+.stat-value {
+  color: var(--accent-softblue);
 }
 
-.stat-chip .stat-label {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-top: 2px;
-}
-
-/* ── Status Indicator ────────────────────────────────────── */
-.status-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 1rem;
-}
-
-.status-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
-  animation: pulse-green 2s infinite;
-}
-
-@keyframes pulse-green {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.status-text {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #22c55e;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-/* ── Glow Accent Blob ────────────────────────────────────── */
-.glow-blob {
-  position: fixed;
-  width: 500px; height: 500px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.08), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ── Info alert ──────────────────────────────────────────── */
-[data-testid="stAlert"] {
-  background: rgba(0, 229, 255, 0.06) !important;
-  border: 1px solid rgba(0, 229, 255, 0.2) !important;
-  border-radius: 12px !important;
-  color: var(--text-secondary) !important;
-}
-
-/* ── Spinner override ────────────────────────────────────── */
-[data-testid="stSpinner"] {
-  color: var(--accent-cyan) !important;
-}
-
-/* ── Streamlit columns ───────────────────────────────────── */
-[data-testid="stHorizontalBlock"] {
-  gap: 1.25rem !important;
-}
-
-/* ── Responsive ──────────────────────────────────────────── */
+/* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 640px) {
-  .stats-row { flex-direction: column; }
-  .lect-title { font-size: 1.8rem !important; }
+  .lect-title { font-size: 1.8rem; }
 }
