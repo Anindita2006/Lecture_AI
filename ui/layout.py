@@ -51,39 +51,22 @@ def render_page_header() -> None:
 # ── Top Section (Upload only, no options) ──────────────────
 
 def render_top_section():
-    col1, col2 = st.columns(2)
-
     uploaded = None
 
-    with col1:
-        st.markdown(section_label("🎙", "Upload Audio"), unsafe_allow_html=True)
+    st.markdown(section_label("🎙", "Upload Audio"), unsafe_allow_html=True)
 
-        uploaded = st.file_uploader(
-            label="Drop your audio file here",
-            type=["mp3", "wav", "webm", "m4a", "ogg", "flac"],
-            label_visibility="collapsed",
+    uploaded = st.file_uploader(
+        label="Drop your audio file here",
+        type=["mp3", "wav", "webm", "m4a", "ogg", "flac"],
+        label_visibility="collapsed",
+    )
+
+    if uploaded:
+        size_kb = len(uploaded.getvalue()) / 1024
+        st.markdown(
+            file_info_pill(uploaded.name, size_kb),
+            unsafe_allow_html=True,
         )
-
-        if uploaded:
-            size_kb = len(uploaded.getvalue()) / 1024
-            st.markdown(
-                file_info_pill(uploaded.name, size_kb),
-                unsafe_allow_html=True,
-            )
-
-    # Right col: show previous results if they exist, else placeholder
-    with col2:
-        result = st.session_state.get("result")
-        if result:
-            _render_topic_panel(result)
-        else:
-            st.markdown(open_card("min-height:180px; display:flex; align-items:center; justify-content:center; text-align:center;"), unsafe_allow_html=True)
-            st.markdown("""
-                <div style="color:#64748b; font-size:0.9rem; line-height:1.6;">
-                  🎙 Upload a file<br>and click <strong style="color:#cbd5f5">Process</strong>
-                </div>
-            """, unsafe_allow_html=True)
-            st.markdown(close_card(), unsafe_allow_html=True)
 
     return uploaded
 
