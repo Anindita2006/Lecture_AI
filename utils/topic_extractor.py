@@ -171,8 +171,23 @@ def extract_keywords(transcript: str, top_n: int = 16) -> List[str]:
         if len(sentences) < 2:
             raise ValueError("Too short for TF-IDF")
 
+        EXTRA_STOPS = [
+            "know","known","look","let","see","called","call","come","go","get",
+            "now","here","there","like","well","one","two","three","four","five",
+            "six","seven","eight","nine","ten","next","last","first","second",
+            "want","need","make","made","use","used","using","show","shown",
+            "start","end","new","old","time","way","thing","things","part",
+            "put","take","turn","back","front","side","left","right","around",
+            "tell","say","said","mean","means","form","forms","formed",
+            "present","different","same","little","big","large","small",
+            "video","watch","today","check","click","subscribe","hit","share",
+            "course","courses","learn","learning","hope","enjoyed","just","also",
+        ]
+        from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+        custom_stops = list(ENGLISH_STOP_WORDS) + EXTRA_STOPS
+
         vectorizer = TfidfVectorizer(
-            stop_words="english",
+            stop_words=custom_stops,
             ngram_range=(1, 2),
             max_features=200,
             min_df=1,
@@ -197,6 +212,16 @@ def extract_keywords(transcript: str, top_n: int = 16) -> List[str]:
         "you","your","he","his","she","her","i","my","me","us","not","no",
         "so","if","as","by","from","about","into","through","during","before",
         "after","also","just","more","very","can","all","any","each","both",
+        "know","known","look","let","see","called","call","come","go","get",
+        "now","here","there","like","well","one","two","three","four","five",
+        "six","seven","eight","nine","ten","next","last","first","second",
+        "want","need","make","made","use","used","using","show","shown",
+        "start","end","new","old","time","way","thing","things","part",
+        "put","take","turn","back","front","side","left","right","around",
+        "tell","say","said","mean","means","form","forms","formed",
+        "present","different","same","little","big","large","small",
+        "video","watch","today","check","click","subscribe","hit","share",
+        "course","courses","learn","learning","hope","enjoyed",
     }
     cleaned = _clean_text(transcript)
     words   = [w for w in cleaned.split() if w not in STOPWORDS and len(w) > 3]
