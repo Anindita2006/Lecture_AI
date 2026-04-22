@@ -214,10 +214,10 @@ def render_results(uploaded) -> None:
 
     # ── Transcript ─────────────────────────────────────────
     st.markdown(section_label("📄", "Full Transcript"), unsafe_allow_html=True)
-    st.markdown(open_card(), unsafe_allow_html=True)
-    st.markdown(status_ready(), unsafe_allow_html=True)
-    st.markdown(transcript_box(transcript), unsafe_allow_html=True)
-    st.markdown(close_card(), unsafe_allow_html=True)
+    st.markdown(
+        open_card() + status_ready() + transcript_box(transcript) + close_card(),
+        unsafe_allow_html=True,
+    )
 
     st.download_button(
         label="⬇️ Download Transcript",
@@ -231,22 +231,20 @@ def render_results(uploaded) -> None:
 
     # ── Keywords ───────────────────────────────────────────
     if keywords:
-        st.markdown(section_label("🔑", "Key Concepts"), unsafe_allow_html=True)
-        st.markdown(open_card(), unsafe_allow_html=True)
         kw_pills = "".join(
             f"<span class='topic-tag secondary'>{kw}</span>" for kw in keywords
         )
-        st.markdown(f'<div class="topic-tags">{kw_pills}</div>', unsafe_allow_html=True)
-        st.markdown(close_card(), unsafe_allow_html=True)
-
+        st.markdown(section_label("🔑", "Key Concepts"), unsafe_allow_html=True)
+        st.markdown(
+            open_card() + f'<div class="topic-tags">{kw_pills}</div>' + close_card(),
+            unsafe_allow_html=True,
+        )
         st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Summary ────────────────────────────────────────────
     if summary:
         st.markdown(section_label("✍️", "AI Summary"), unsafe_allow_html=True)
-        st.markdown(open_card(), unsafe_allow_html=True)
         st.markdown(
-            f"<p style='color:#cbd5f5; line-height:1.75; font-size:0.95rem;'>{summary}</p>",
+            open_card() + f"<p style='color:#cbd5f5; line-height:1.75; font-size:0.95rem;'>{summary}</p>" + close_card(),
             unsafe_allow_html=True,
         )
-        st.markdown(close_card(), unsafe_allow_html=True)
