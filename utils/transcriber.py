@@ -7,6 +7,11 @@ import os
 import warnings
 warnings.filterwarnings("ignore", message=".*FP16 is not supported on CPU.*")
 
+# Windows: point Python directly at ffmpeg so PATH does not matter
+_FFMPEG_WIN = r"C:\Users\anind\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin"
+if os.name == "nt" and os.path.isdir(_FFMPEG_WIN):
+    os.environ["PATH"] = _FFMPEG_WIN + os.pathsep + os.environ.get("PATH", "")
+
 
 def transcribe_audio(audio_path: str, model_size: str = "base", language: str = None):
     """
