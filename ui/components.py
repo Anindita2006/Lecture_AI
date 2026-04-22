@@ -9,7 +9,6 @@ st.markdown(..., unsafe_allow_html=True).
 # ── Header ────────────────────────────────────────────────
 
 def render_header() -> str:
-    """App title block with badge, gradient title, and subtitle."""
     return """
 <div class="lect-header">
   <div class="lect-badge">⚡ AI-Powered</div>
@@ -25,7 +24,6 @@ def render_header() -> str:
 # ── Section Label ──────────────────────────────────────────
 
 def section_label(icon: str, text: str) -> str:
-    """Small all-caps label with glowing dot, used above card sections."""
     return f"""
 <div class="section-label">
   <span class="dot"></span>
@@ -37,17 +35,16 @@ def section_label(icon: str, text: str) -> str:
 # ── Divider ────────────────────────────────────────────────
 
 def divider() -> str:
-    """Subtle horizontal rule with gradient fade."""
     return '<div class="lect-divider"></div>'
 
 
 # ── File Info Pill ─────────────────────────────────────────
 
 def file_info_pill(filename: str, size_kb: float) -> str:
-    """Pill badge displayed after a file is selected."""
+    size_str = f"{size_kb:.1f} KB" if size_kb < 1024 else f"{size_kb/1024:.2f} MB"
     return f"""
 <div class="file-info-pill">
-  🎵 <strong>{filename}</strong>&nbsp;&nbsp;·&nbsp;&nbsp;{size_kb:.1f} KB
+  🎵 <strong>{filename}</strong>&nbsp;&nbsp;·&nbsp;&nbsp;{size_str}
 </div>
 """
 
@@ -55,22 +52,17 @@ def file_info_pill(filename: str, size_kb: float) -> str:
 # ── Transcript Box ─────────────────────────────────────────
 
 def transcript_box(text: str) -> str:
-    """Scrollable dark box containing the transcribed text."""
-    # Wrap paragraphs for nicer rendering
-    paragraphs = "".join(f"<p style='margin-bottom:0.9rem'>{p.strip()}</p>"
-                         for p in text.split("\n") if p.strip())
+    paragraphs = "".join(
+        f"<p style='margin-bottom:0.9rem'>{p.strip()}</p>"
+        for p in text.split("\n") if p.strip()
+    )
     return f'<div class="transcript-box">{paragraphs}</div>'
 
 
 # ── Topic Tags ─────────────────────────────────────────────
 
-def topic_tags(primary: str, secondary: list[str]) -> str:
-    """
-    Render topic pills.
-    primary  → highlighted cyan pill (main topic)
-    secondary → list of supporting tags
-    """
-    html = '<div class="topic-tags">'
+def topic_tags(primary: str, secondary: list) -> str:
+    html  = '<div class="topic-tags">'
     html += f'<span class="topic-tag primary">🏷 {primary}</span>'
     for i, tag in enumerate(secondary):
         css_class = "secondary" if i < 2 else "tertiary"
@@ -82,11 +74,10 @@ def topic_tags(primary: str, secondary: list[str]) -> str:
 # ── Stats Row ──────────────────────────────────────────────
 
 def stats_row(word_count: int, duration_est: str, confidence: str) -> str:
-    """Three-chip row showing quick transcript statistics."""
     chips = [
         ("📝", str(word_count), "Words"),
-        ("⏱", duration_est, "Est. Duration"),
-        ("🎯", confidence, "Confidence"),
+        ("⏱", duration_est,    "Duration"),
+        ("🎯", confidence,      "Confidence"),
     ]
     inner = "".join(
         f"""
@@ -103,7 +94,6 @@ def stats_row(word_count: int, duration_est: str, confidence: str) -> str:
 # ── Status Indicator ───────────────────────────────────────
 
 def status_ready() -> str:
-    """Green pulsing dot — shown when results are ready."""
     return """
 <div class="status-row">
   <div class="status-dot"></div>
@@ -112,12 +102,11 @@ def status_ready() -> str:
 """
 
 
-# ── Glass Card wrapper ─────────────────────────────────────
+# ── Glass Card Wrappers ────────────────────────────────────
 
 def open_card(extra_style: str = "") -> str:
     style = f' style="{extra_style}"' if extra_style else ""
     return f'<div class="glass-card"{style}>'
-
 
 def close_card() -> str:
     return "</div>"
