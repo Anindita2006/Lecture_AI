@@ -57,7 +57,6 @@ def render_top_section():
 
     with col1:
         st.markdown(section_label("🎙", "Upload Audio"), unsafe_allow_html=True)
-        st.markdown(open_card(), unsafe_allow_html=True)
 
         uploaded = st.file_uploader(
             label="Drop your audio file here",
@@ -71,8 +70,6 @@ def render_top_section():
                 file_info_pill(uploaded.name, size_kb),
                 unsafe_allow_html=True,
             )
-
-        st.markdown(close_card(), unsafe_allow_html=True)
 
     # Right col: show previous results if they exist, else placeholder
     with col2:
