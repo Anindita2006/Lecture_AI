@@ -1,5 +1,5 @@
 /* ============================================================
-   LECTUREAI — Soft Dark Glassmorphism (Improved)
+   LECTUREAI — Soft Dark Glassmorphism
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
@@ -10,9 +10,9 @@
   --bg-deep:        #1e293b;
   --bg-surface:     #1f2937;
 
-  --glass-bg:       rgba(255, 255, 255, 0.08);
-  --glass-border:   rgba(255, 255, 255, 0.15);
-  --glass-hover:    rgba(255, 255, 255, 0.12);
+  --glass-bg:       rgba(255, 255, 255, 0.06);
+  --glass-border:   rgba(255, 255, 255, 0.12);
+  --glass-hover:    rgba(255, 255, 255, 0.10);
 
   --accent-cyan:    #00e5ff;
   --accent-softblue:#38bdf8;
@@ -23,7 +23,7 @@
   --text-secondary: #cbd5f5;
   --text-muted:     #64748b;
 
-  --radius-card:    18px;
+  --radius-card:    16px;
   --radius-pill:    100px;
 
   --font-display:   'Syne', sans-serif;
@@ -33,9 +33,10 @@
 /* ── Global Reset ───────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body, [data-testid="stAppViewContainer"],
+html, body,
+[data-testid="stAppViewContainer"],
 [data-testid="stApp"] {
-  background: linear-gradient(135deg, #0f172a, #1e293b) !important;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
   color: var(--text-primary) !important;
   font-family: var(--font-body) !important;
 }
@@ -48,8 +49,8 @@ html, body, [data-testid="stAppViewContainer"],
 
 /* Main content */
 [data-testid="stAppViewContainer"] > .main .block-container {
-  padding: 2rem 1.5rem 3rem !important;
-  max-width: 850px !important;
+  padding: 2rem 1.5rem 4rem !important;
+  max-width: 860px !important;
   margin: 0 auto !important;
 }
 
@@ -59,10 +60,11 @@ html, body, [data-testid="stAppViewContainer"],
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
+    linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+  background-size: 52px 52px;
   pointer-events: none;
+  z-index: 0;
 }
 
 /* ── Header ───────────────────────────────────────────── */
@@ -71,19 +73,73 @@ html, body, [data-testid="stAppViewContainer"],
   padding: 2.5rem 0 1.8rem;
 }
 
+.lect-badge {
+  display: inline-block;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 100px;
+  padding: 0.3rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent-softblue);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
 .lect-title {
   font-family: var(--font-display);
-  font-size: 2.6rem;
+  font-size: 2.8rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #ffffff, var(--accent-softblue));
+  background: linear-gradient(135deg, #ffffff 30%, var(--accent-softblue) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 0.6rem;
 }
 
 .lect-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin-top: 0.6rem;
+  font-size: 0.98rem;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* ── Divider ───────────────────────────────────────────── */
+.lect-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+  margin: 1.8rem 0;
+}
+
+/* ── Section Label ─────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.section-label .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-softblue);
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
 }
 
 /* ── Glass Cards ───────────────────────────────────────── */
@@ -91,22 +147,25 @@ html, body, [data-testid="stAppViewContainer"],
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 1.6rem;
+  padding: 1.4rem 1.6rem;
   backdrop-filter: blur(14px);
-  transition: all 0.3s ease;
+  -webkit-backdrop-filter: blur(14px);
+  transition: border-color 0.25s ease, background 0.25s ease;
+  margin-bottom: 0.25rem;
 }
 
 .glass-card:hover {
-  border-color: var(--accent-softblue);
+  border-color: rgba(56, 189, 248, 0.35);
   background: var(--glass-hover);
 }
 
 /* ── Upload Box ───────────────────────────────────────── */
 [data-testid="stFileUploader"] > div {
-  background: rgba(56, 189, 248, 0.05) !important;
-  border: 1.5px dashed rgba(56, 189, 248, 0.3) !important;
-  border-radius: 14px !important;
+  background: rgba(56, 189, 248, 0.04) !important;
+  border: 1.5px dashed rgba(56, 189, 248, 0.25) !important;
+  border-radius: 12px !important;
   padding: 1.2rem !important;
+  transition: all 0.2s ease;
 }
 
 [data-testid="stFileUploader"] > div:hover {
@@ -114,53 +173,186 @@ html, body, [data-testid="stAppViewContainer"],
   border-color: var(--accent-softblue) !important;
 }
 
-/* ── Button ───────────────────────────────────────────── */
+/* ── File Info Pill ────────────────────────────────────── */
+.file-info-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 0.75rem;
+}
+
+/* ── Process Button ───────────────────────────────────── */
 [data-testid="stButton"] > button {
   background: linear-gradient(135deg, var(--accent-softblue), var(--accent-violet)) !important;
+  color: #fff !important;
+  border: none !important;
   border-radius: 10px !important;
   padding: 0.75rem !important;
-  font-weight: 600 !important;
-  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3) !important;
+  font-family: var(--font-display) !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.25) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 [data-testid="stButton"] > button:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(56, 189, 248, 0.35) !important;
+}
+
+[data-testid="stButton"] > button:active {
+  transform: translateY(0) !important;
+}
+
+/* ── Download Button ──────────────────────────────────── */
+[data-testid="stDownloadButton"] > button {
+  background: rgba(56, 189, 248, 0.08) !important;
+  color: var(--accent-softblue) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  border-radius: 10px !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  transition: background 0.2s ease !important;
+  margin-top: 0.5rem;
+}
+
+[data-testid="stDownloadButton"] > button:hover {
+  background: rgba(56, 189, 248, 0.15) !important;
 }
 
 /* ── Transcript Box ───────────────────────────────────── */
 .transcript-box {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  padding: 1.2rem;
-  max-height: 240px;
+  padding: 1.2rem 1.4rem;
+  max-height: 260px;
   overflow-y: auto;
   color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.75;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(56, 189, 248, 0.2) transparent;
 }
 
+.transcript-box::-webkit-scrollbar       { width: 4px; }
+.transcript-box::-webkit-scrollbar-thumb { background: rgba(56,189,248,0.25); border-radius: 4px; }
+
 /* ── Topic Tags ───────────────────────────────────────── */
+.topic-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.topic-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .topic-tag.primary {
   background: rgba(56, 189, 248, 0.15);
   border: 1px solid rgba(56, 189, 248, 0.4);
   color: var(--accent-softblue);
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 
 .topic-tag.secondary {
   background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.25);
   color: #c4b5fd;
 }
 
-/* ── Stats ───────────────────────────────────────────── */
-.stat-chip {
+.topic-tag.tertiary {
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+/* ── Stats Row ────────────────────────────────────────── */
+.stats-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.stat-chip {
+  flex: 1;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  text-align: center;
 }
 
 .stat-value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--accent-softblue);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Status Row ───────────────────────────────────────── */
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #22d3a5;
+  border-radius: 50%;
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+.status-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #22d3a5;
+}
+
+/* ── Progress Bar ─────────────────────────────────────── */
+[data-testid="stProgress"] > div > div > div {
+  background: linear-gradient(to right, var(--accent-softblue), var(--accent-violet)) !important;
+  border-radius: 4px !important;
+}
+
+/* ── Alerts ───────────────────────────────────────────── */
+.stAlert {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-border) !important;
+  color: var(--text-secondary) !important;
+  border-radius: 10px !important;
 }
 
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 640px) {
-  .lect-title { font-size: 1.8rem; }
+  .lect-title  { font-size: 2rem; }
+  .stats-row   { flex-direction: column; }
 }
