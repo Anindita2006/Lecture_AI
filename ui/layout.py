@@ -112,7 +112,7 @@ def _run_processing(uploaded) -> dict:
     placeholder.markdown("<p style='color:#cbd5f5; font-size:0.85rem;'>🧠 Running Whisper transcription...</p>", unsafe_allow_html=True)
     bar.progress(0.40)
 
-    transcript, detected_lang, duration = transcribe_audio(tmp_path, model_size="base")
+    transcript, detected_lang, duration = transcribe_audio(tmp_path, model_size="tiny")
 
     placeholder.markdown("<p style='color:#cbd5f5; font-size:0.85rem;'>🔍 Extracting topics...</p>", unsafe_allow_html=True)
     bar.progress(0.65)
@@ -205,10 +205,13 @@ def render_results(uploaded) -> None:
     st.markdown(divider(), unsafe_allow_html=True)
 
     # ── Stats row ──────────────────────────────────────────
-    st.markdown(
-        stats_row(word_count, duration_str, result["confidence"]),
-        unsafe_allow_html=True,
-    )
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(f'<div class="stat-chip"><div class="stat-value">📝 {word_count}</div><div class="stat-label">Words</div></div>', unsafe_allow_html=True)
+    with c2:
+        st.markdown(f'<div class="stat-chip"><div class="stat-value">⏱ {duration_str}</div><div class="stat-label">Duration</div></div>', unsafe_allow_html=True)
+    with c3:
+        st.markdown(f'<div class="stat-chip"><div class="stat-value">🎯 {result["confidence"]}</div><div class="stat-label">Confidence</div></div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
