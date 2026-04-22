@@ -1,13 +1,16 @@
 """
 ui/layout.py
 ─────────────────────────────────────────────────────────────
-Premium Layout Upgrade (Fixed Version)
-• Side-by-side upload + options
-• Tab-based results (no long scroll)
-• Cleaner structure
+Layout with real backend connected.
+- No options dropdowns
+- Results persist via session_state
+- 2-column layout kept
+- Scroll fixed: results render in-place, not re-expanded
 """
 
+import os
 import time
+import tempfile
 import streamlit as st
 
 from ui.components import (
@@ -24,11 +27,12 @@ from ui.components import (
 )
 
 from utils.helpers import (
-    get_mock_transcript,
-    get_mock_topics,
     get_transcript_stats,
     load_css,
 )
+
+from utils.transcriber import transcribe_audio
+from utils.topic_extractor import extract_topic, extract_keywords, generate_summary
 
 
 # ── Inject CSS ─────────────────────────────────────────────
@@ -44,14 +48,12 @@ def render_page_header() -> None:
     st.markdown(render_header(), unsafe_allow_html=True)
 
 
-# ── Top Section (Upload + Options) ─────────────────────────
+# ── Top Section (Upload only, no options) ──────────────────
 
 def render_top_section():
     col1, col2 = st.columns(2)
 
     uploaded = None
-    model_size = None
-    language = None
 
     with col1:
         st.markdown(section_label("🎙", "Upload Audio"), unsafe_allow_html=True)
@@ -59,7 +61,7 @@ def render_top_section():
 
         uploaded = st.file_uploader(
             label="Drop your audio file here",
-            type=["mp3", "wav", "webm"],
+            type=["mp3", "wav", "webm", "m4a", "ogg", "flac"],
             label_visibility="collapsed",
         )
 
@@ -72,16 +74,21 @@ def render_top_section():
 
         st.markdown(close_card(), unsafe_allow_html=True)
 
+    # Right col: show previous results if they exist, else placeholder
     with col2:
-        st.markdown(section_label("⚙️", "Options"), unsafe_allow_html=True)
-        st.markdown(open_card(), unsafe_allow_html=True)
+        result = st.session_state.get("result")
+        if result:
+            _render_topic_panel(result)
+        else:
+            st.markdown(open_card("min-height:180px; display:flex; align-items:center; justify-content:center; text-align:center;"), unsafe_allow_html=True)
+            st.markdown("""
+                <div style="color:#64748b; font-size:0.9rem; line-height:1.6;">
+                  🎙 Upload a file<br>and click <strong style="color:#cbd5f5">Process</strong>
+                </div>
+            """, unsafe_allow_html=True)
+            st.markdown(close_card(), unsafe_allow_html=True)
 
-        model_size = st.selectbox("Whisper Model", ["base", "small", "medium"])
-        language = st.selectbox("Language", ["Auto", "English", "Telugu"])
-
-        st.markdown(close_card(), unsafe_allow_html=True)
-
-    return uploaded, model_size, language
+    return uploaded
 
 
 # ── Process Button ─────────────────────────────────────────
@@ -90,89 +97,176 @@ def render_process_button(uploaded):
     clicked = st.button("⚡ Process Lecture", use_container_width=True)
 
     if clicked and not uploaded:
-        st.warning("Upload file first 😑")
+        st.warning("Upload a file first!")
         return False
 
     return clicked and uploaded is not None
 
 
-# ── Processing Animation ───────────────────────────────────
+# ── Processing: runs real backend ──────────────────────────
 
-def simulate_processing():
+def _run_processing(uploaded) -> dict:
+    """Save upload to temp file, run Whisper + NLP, return result dict."""
+
+    suffix = os.path.splitext(uploaded.name)[1]
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(uploaded.getvalue())
+        tmp_path = tmp.name
+
     steps = [
-        ("🔊 Decoding audio...", 0.3),
-        ("🧠 Running AI model...", 0.6),
-        ("🔍 Extracting topics...", 0.85),
-        ("✅ Finalizing...", 1.0),
+        (0.15, "🔊 Decoding audio..."),
+        (0.40, "🧠 Running Whisper transcription..."),
+        (0.65, "🔍 Extracting topics..."),
+        (0.85, "✍️ Generating summary..."),
+        (1.00, "✅ Finalizing..."),
     ]
 
+    bar         = st.progress(0.0)
     placeholder = st.empty()
-    bar = st.progress(0)
 
-    for text, val in steps:
-        placeholder.markdown(
-            f"<p style='color:#cbd5f5'>{text}</p>",
-            unsafe_allow_html=True,
-        )
-        bar.progress(val)
-        time.sleep(0.6)
+    # Run transcription while showing early steps
+    placeholder.markdown("<p style='color:#cbd5f5; font-size:0.85rem;'>🔊 Decoding audio...</p>", unsafe_allow_html=True)
+    bar.progress(0.15)
+    time.sleep(0.3)
 
-    placeholder.empty()
+    placeholder.markdown("<p style='color:#cbd5f5; font-size:0.85rem;'>🧠 Running Whisper transcription...</p>", unsafe_allow_html=True)
+    bar.progress(0.40)
+
+    transcript, detected_lang, duration = transcribe_audio(tmp_path, model_size="base")
+
+    placeholder.markdown("<p style='color:#cbd5f5; font-size:0.85rem;'>🔍 Extracting topics...</p>", unsafe_allow_html=True)
+    bar.progress(0.65)
+
+    primary_topic, confidence = extract_topic(transcript)
+    keywords                  = extract_keywords(transcript)
+
+    placeholder.markdown("<p style='color:#cbd5f5; font-size:0.85rem;'>✍️ Generating summary...</p>", unsafe_allow_html=True)
+    bar.progress(0.85)
+
+    summary = generate_summary(transcript)
+
+    bar.progress(1.0)
+    time.sleep(0.3)
     bar.empty()
+    placeholder.empty()
+
+    os.unlink(tmp_path)
+
+    return {
+        "transcript":    transcript,
+        "primary_topic": primary_topic,
+        "confidence":    f"{confidence:.0%}",
+        "keywords":      keywords,
+        "summary":       summary,
+        "duration":      duration,
+        "filename":      uploaded.name,
+    }
 
 
-# ── Results Section (TABS UI) ──────────────────────────────
+# ── Topic panel (shown in right col after processing) ──────
 
-def render_results(filename: str):
+def _render_topic_panel(result: dict) -> None:
+    st.markdown(open_card(), unsafe_allow_html=True)
 
-    simulate_processing()
+    # Topic + confidence
+    topic_icon = {
+        "Science & Technology": "🔬", "Mathematics": "📐",
+        "History & Social Studies": "📜", "Language & Literature": "📖",
+        "Medicine & Health": "🏥", "Business & Economics": "📊",
+        "Philosophy & Ethics": "🤔", "Computer Science": "💻",
+        "Engineering": "⚙️", "Environmental Science": "🌱",
+        "Law & Politics": "⚖️", "Arts & Culture": "🎨",
+        "General Education": "🎓",
+    }.get(result["primary_topic"], "🏷️")
 
-    transcript = get_mock_transcript()
-    primary_topic, secondary_topics = get_mock_topics()
-    word_count, duration_est, confidence = get_transcript_stats(transcript)
+    st.markdown(
+        topic_tags(
+            f"{topic_icon} {result['primary_topic']}",
+            result["keywords"][:5],
+        ),
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(f"""
+        <div style="margin-top:0.8rem; font-size:0.78rem; color:#64748b;">
+          Confidence: <span style="color:#38bdf8">{result['confidence']}</span>
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown(close_card(), unsafe_allow_html=True)
+
+
+# ── Results Section ────────────────────────────────────────
+
+def render_results(uploaded) -> None:
+    """Run backend if not cached, then render all results."""
+
+    # Run backend only if result not yet in session state
+    if st.session_state.get("result") is None:
+        result = _run_processing(uploaded)
+        st.session_state["result"] = result
+        st.rerun()
+        return
+
+    result     = st.session_state["result"]
+    transcript = result["transcript"]
+    summary    = result["summary"]
+    keywords   = result["keywords"]
+    duration   = result["duration"]
+    filename   = result["filename"]
+
+    word_count, duration_str, _ = get_transcript_stats(transcript)
+    # Override duration_str with real Whisper duration if available
+    if duration:
+        m = int(duration // 60)
+        s = int(duration % 60)
+        duration_str = f"{m}m {s:02d}s"
 
     st.markdown(divider(), unsafe_allow_html=True)
 
-    tab1, tab2, tab3 = st.tabs(["📄 Transcript", "🏷 Topics", "🧠 Summary"])
+    # ── Stats row ──────────────────────────────────────────
+    st.markdown(
+        stats_row(word_count, duration_str, result["confidence"]),
+        unsafe_allow_html=True,
+    )
 
-    # ── Transcript ─────────────────────────
-    with tab1:
-        st.markdown(open_card(), unsafe_allow_html=True)
-        st.markdown(status_ready(), unsafe_allow_html=True)
-        st.markdown(transcript_box(transcript), unsafe_allow_html=True)
-        st.markdown(
-            stats_row(word_count, duration_est, confidence),
-            unsafe_allow_html=True,
-        )
-        st.markdown(close_card(), unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Topics ────────────────────────────
-    with tab2:
-        st.markdown(open_card(), unsafe_allow_html=True)
-        st.markdown(topic_tags(primary_topic, secondary_topics), unsafe_allow_html=True)
-        st.markdown(close_card(), unsafe_allow_html=True)
+    # ── Transcript ─────────────────────────────────────────
+    st.markdown(section_label("📄", "Full Transcript"), unsafe_allow_html=True)
+    st.markdown(open_card(), unsafe_allow_html=True)
+    st.markdown(status_ready(), unsafe_allow_html=True)
+    st.markdown(transcript_box(transcript), unsafe_allow_html=True)
+    st.markdown(close_card(), unsafe_allow_html=True)
 
-    # ── Summary ───────────────────────────
-    with tab3:
-        st.markdown(open_card(), unsafe_allow_html=True)
-        st.markdown(
-            """
-            <p style='color:#cbd5f5'>
-            This lecture covers key concepts in a structured way.
-            It is summarized for quick revision and better understanding.
-            </p>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.markdown(close_card(), unsafe_allow_html=True)
-
-    # ── Download ─────────────────────────
-    st.markdown("<div style='margin-top:1rem'>", unsafe_allow_html=True)
     st.download_button(
         label="⬇️ Download Transcript",
         data=transcript,
-        file_name=f"{filename.rsplit('.', 1)[0]}_transcript.txt",
+        file_name=f"{os.path.splitext(filename)[0]}_transcript.txt",
         mime="text/plain",
         use_container_width=True,
     )
-    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── Keywords ───────────────────────────────────────────
+    if keywords:
+        st.markdown(section_label("🔑", "Key Concepts"), unsafe_allow_html=True)
+        st.markdown(open_card(), unsafe_allow_html=True)
+        kw_pills = "".join(
+            f"<span class='topic-tag secondary'>{kw}</span>" for kw in keywords
+        )
+        st.markdown(f'<div class="topic-tags">{kw_pills}</div>', unsafe_allow_html=True)
+        st.markdown(close_card(), unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── Summary ────────────────────────────────────────────
+    if summary:
+        st.markdown(section_label("✍️", "AI Summary"), unsafe_allow_html=True)
+        st.markdown(open_card(), unsafe_allow_html=True)
+        st.markdown(
+            f"<p style='color:#cbd5f5; line-height:1.75; font-size:0.95rem;'>{summary}</p>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(close_card(), unsafe_allow_html=True)
